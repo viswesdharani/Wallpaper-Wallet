@@ -155,20 +155,17 @@
     <div class="footer">Loading your experience...</div>
   </div>
 
-  <script>
-    // ✅ Wait 2 sec
+<script>
+  // ✅ Wait 3 seconds then fade out and go to home
+  setTimeout(() => {
+    document.body.classList.add("fade-out");
+
     setTimeout(() => {
+      window.location.href = "index.html"; // ✅ go to Home page
+    }, 800);
 
-      // ✅ fade out body
-      document.body.classList.add("fade-out");
-
-      // ✅ redirect after fade completes (0.8 sec)
-      setTimeout(() => {
-        window.location.href = "home.html";
-      }, 800);
-
-    }, 5000);
-  </script>
+  }, 3000);
+</script>
 
 </body>
 </html>

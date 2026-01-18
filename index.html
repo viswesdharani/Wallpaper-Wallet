@@ -288,6 +288,13 @@ function showMsg(text,color="red"){
 
 
 
+  // Show splash only once per session
+  if (!sessionStorage.getItem("splashShown")) {
+    sessionStorage.setItem("splashShown", "yes");
+    window.location.href = "splash.html";
+  }
+
+
 
 
 </script>
