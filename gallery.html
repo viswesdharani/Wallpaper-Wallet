@@ -1,0 +1,2476 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Wallpaper Wallet</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700&display=swap" rel="stylesheet">
+
+<style>
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:'Poppins', sans-serif;
+}
+
+body{
+    background:#eef2f7;
+    padding:20px;
+}
+
+h1{
+    text-align:center;
+    margin-bottom:20px;
+    font-weight:700;
+}
+
+/* Controls */
+.controls{
+    text-align:center;
+    margin-bottom:25px;
+}
+
+.controls button{
+    margin:5px;
+    padding:8px 16px;
+    border:none;
+    border-radius:20px;
+    background:#3f51b5;
+    color:white;
+    cursor:pointer;
+    transition:0.3s;
+}
+/* Category Dropdown */
+.category-dropdown{
+    display:none;
+    position: absolute;
+    top: 50px;
+    left: 0;
+    background: white;
+    padding: 12px;
+    border-radius: 12px;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+    z-index: 3000;
+    min-width: 230px;
+}
+.category-dropdown{
+    max-height: 70vh;
+    overflow-y: auto;
+}
+
+
+
+/* Category list buttons inside dropdown */
+.category-dropdown button{
+    display:block;
+    width:100%;
+    margin:6px 0;
+    padding:10px 14px;
+    border:none;
+    border-radius:10px;
+    background:#3f51b5;
+    color:white;
+    font-weight:600;
+    cursor:pointer;
+    transition:0.3s;
+}
+
+.category-dropdown button:hover{
+    background:#1a237e;
+    transform:scale(1.03);
+}
+
+
+.controls button:hover{
+    background:#1a237e;
+    transform:scale(1.05);
+}
+
+/* Gallery */
+.gallery{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+    gap:20px;
+}
+
+.gallery-item{
+    border-radius:12px;
+    overflow:hidden;
+    box-shadow:0 8px 15px rgba(0,0,0,0.15);
+    cursor:pointer;
+}
+
+.gallery-item img{
+    width:100%;
+    height:100%;
+    object-fit:cover;
+    transition:0.3s;
+}
+
+.gallery-item:hover img{
+    transform:scale(1.08);
+}
+
+/* Lightbox */
+.lightbox{
+    display:none;
+    position:fixed;
+    inset:0;
+    background:rgba(0,0,0,0.85);
+    align-items:center;
+    justify-content:center;
+    z-index:1000;
+}
+
+.lightbox img{
+    max-width:85%;
+    max-height:80%;
+    border-radius:12px;
+}
+
+.lightbox span.close {
+    position: absolute;
+    top: 20px;
+    right: 30px;
+    font-size: 48px;
+    font-weight: bold;
+    color: white;
+    cursor: pointer;
+    z-index: 1001;
+     padding: 5px 10px;
+}
+
+.lightbox span.prev {
+    position: absolute;
+    left: 30px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 48px;
+    color: white;
+    cursor: pointer;
+    z-index: 1001;
+}
+
+.lightbox span.next {
+    position: absolute;
+    right: 30px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 48px;
+    color: white;
+    cursor: pointer;
+    z-index: 1001;
+}
+
+/* Vibrant Filter Buttons at Top-Right */
+.filter-buttons {
+    position: fixed;
+    top: 20px;
+    left: 20px;   /* ← moved from right to left */
+    display: flex;
+    gap: 10px;
+    z-index: 2000;
+}
+
+
+.filter-buttons button {
+    padding: 10px 18px;
+    border-radius: 30px;
+    border: none;
+    cursor: pointer;
+    font-weight: 600;
+    color: white;
+    background: linear-gradient(45deg, #ff6a00, #ee0979);
+    box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+    transition: transform 0.3s, box-shadow 0.3s, filter 0.3s;
+}
+
+.filter-buttons button:hover {
+    transform: scale(1.1);
+    box-shadow: 0 6px 20px rgba(0,0,0,0.4);
+    filter: brightness(1.2);
+}
+#backButton {
+    background: #f44336; /* Red color */
+    color: white;
+    padding: 8px 16px;
+    border-radius: 20px;
+    border: none;
+    cursor: pointer;
+    margin-bottom: 10px;
+    transition: 0.3s;
+}
+
+#backButton:hover {
+    background: #d32f2f;
+    transform: scale(1.05);
+}
+/* ==========================
+   RESPONSIVE DESIGN
+========================== */
+
+/* Tablets */
+@media (max-width: 992px) {
+    .gallery {
+        grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+        gap: 16px;
+    }
+
+    .controls button {
+        padding: 6px 14px;
+        font-size: 14px;
+    }
+
+    .filter-buttons button {
+        padding: 8px 14px;
+        font-size: 14px;
+    }
+}
+
+/* Mobile */
+@media (max-width: 600px) {
+    body {
+        padding: 10px;
+    }
+
+    h1 {
+        font-size: 20px;
+        margin-top: 60px;
+    }
+
+    .gallery {
+        grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+        gap: 12px;
+    }
+
+    .controls {
+        margin-bottom: 15px;
+    }
+
+    .controls button {
+        padding: 6px 12px;
+        font-size: 13px;
+        margin: 4px;
+    }
+
+    .filter-buttons {
+        flex-direction: column;
+        gap: 6px;
+    }
+
+    .filter-buttons button {
+        padding: 6px 12px;
+        font-size: 12px;
+    }
+
+    .lightbox img {
+        max-width: 95%;
+        max-height: 70%;
+    }
+
+    .lightbox span.prev,
+    .lightbox span.next {
+        font-size: 36px;
+    }
+
+    .lightbox span.close {
+        font-size: 40px;
+        top: 15px;
+        right: 20px;
+    }
+}
+/* Filter container (top-left) */
+.filter-container {
+    position: fixed;
+    top: 20px;
+    left: 20px;
+    z-index: 2000;
+}
+
+/* Main Filter button */
+.filter-toggle {
+    background: #e0e0e0;
+    color: #000;
+    font-weight: bold;
+    border: none;
+    padding: 10px 18px;
+    border-radius: 25px;
+    cursor: pointer;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+}
+
+/* Hidden filter options */
+#filterOptions {
+    display: none;
+    margin-top: 15px;   /* More gap from Filter button */
+    padding: 10px;      /* Clickable empty space */
+    background: rgba(255,255,255,0.15);
+    border-radius: 15px;
+    flex-direction: column;
+    gap: 10px;
+}
+#downloadBtn{
+    position:absolute;
+    bottom:30px;
+    right:30px;
+    padding:10px 18px;
+    border:none;
+    border-radius:25px;
+    background:#4caf50;
+    color:white;
+    font-weight:600;
+    cursor:pointer;
+}
+#downloadBtn:hover{
+    background:#388e3c;
+}
+#sliderPanel{
+    margin-top:15px;
+    padding:10px;
+    background:rgba(255,255,255,0.2);
+    border-radius:15px;
+}
+#sliderPanel label{
+    display:block;
+    font-size:12px;
+    margin-bottom:6px;
+}
+#sliderPanel input{
+    width:100%;
+}
+
+.editor-btn{
+    background:#212121;
+    color:#fff;
+}
+
+/* Editor Panel */
+#editorPanel{
+    display:none;
+    width:30vw;
+    max-width:320px;
+    padding:15px;
+    margin-top:15px;
+    background:#ffffff;
+    border-radius:15px;
+    box-shadow:0 8px 25px rgba(0,0,0,0.25);
+}
+
+#editorPanel h4{
+    margin-bottom:10px;
+    font-size:14px;
+    text-align:center;
+}
+
+#editorPanel label{
+    display:block;
+    font-size:12px;
+    margin-bottom:10px;
+}
+
+#editorPanel input{
+    width:100%;
+}
+
+/* Mobile */
+@media(max-width:600px){
+    #editorPanel{
+        width:90vw;
+    }
+}
+#filterOptions{
+    max-height: 70vh;
+    overflow-y: auto;
+}
+
+/* ===== Search Button + Search Box ===== */
+.search-wrap{
+    position: relative;
+    display: inline-block;
+}
+
+.search-btn{
+    background: #fff;
+    color: #000;
+    font-weight: bold;
+    border: none;
+    padding: 10px 18px;
+    border-radius: 25px;
+    cursor: pointer;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+    margin-left: 8px;
+}
+/* ✅ Global Search Button */
+.global-btn{
+    background: #7fd8ff;
+    color: black;
+    font-weight: bold;
+    border: none;
+    padding: 10px 18px;
+    border-radius: 25px;
+    cursor: pointer;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+    margin-left: 8px;
+    transition: 0.3s;
+}
+.global-btn:hover{
+    transform: scale(1.08);
+    filter: brightness(1.05);
+}
+
+/* ✅ Search button inside global search box */
+.global-search-go{
+    width: 100%;
+    margin-top: 10px;
+    padding: 10px;
+    border: none;
+    border-radius: 10px;
+    background: #3f51b5;
+    color: white;
+    font-weight: 600;
+    cursor: pointer;
+}
+.global-search-go:hover{
+    background:#1a237e;
+}
+
+
+/* Search popup box */
+.search-box{
+    display:none;
+    position:absolute;
+    top: 50px;
+    left: 0;
+    background:#fff;
+    padding:10px;
+    border-radius:12px;
+    box-shadow:0 8px 20px rgba(0,0,0,0.25);
+    z-index:4000;
+    width:260px;
+}
+
+/* input */
+.search-box input{
+    width:100%;
+    padding:10px 38px 10px 12px;
+    border-radius:10px;
+    border:1px solid #ddd;
+    outline:none;
+    font-size:14px;
+}
+
+/* close icon */
+.search-close{
+    position:absolute;
+    right:18px;
+    top:18px;
+    font-size:18px;
+    font-weight:bold;
+    cursor:pointer;
+    color:#000;
+}
+
+/* result list */
+.search-results{
+    margin-top:10px;
+    max-height: 250px;
+    overflow-y:auto;
+}
+
+.search-results button{
+    display:block;
+    width:100%;
+    margin:6px 0;
+    padding:10px 14px;
+    border:none;
+    border-radius:10px;
+    background:#3f51b5;
+    color:white;
+    font-weight:600;
+    cursor:pointer;
+    transition:0.3s;
+}
+
+.search-results button:hover{
+    background:#1a237e;
+    transform:scale(1.03);
+}
+/* ==========================
+   ✅ TOOLS PANEL
+========================== */
+.tools-panel{
+    position: fixed;
+    top: 80px;
+    left: 20px;
+    width: 30vw;
+    height: 30vh;
+    max-width: 360px;
+    min-width: 240px;
+    background: white;
+    border-radius: 18px;
+    box-shadow: 0 8px 25px rgba(0,0,0,0.25);
+    z-index: 5000;
+    padding: 15px;
+    display: none;
+
+    /* ✅ smooth transition */
+    opacity: 0;
+    transform: translateY(-10px);
+    transition: 0.35s ease;
+}
+
+.tools-panel.show{
+    display: block;
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.tools-panel h4{
+    text-align: center;
+    font-size: 15px;
+    margin-bottom: 12px;
+}
+
+.tools-close{
+    position: absolute;
+    right: 15px;
+    top: 10px;
+    font-size: 22px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.tools-buttons{
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+    height: calc(100% - 40px);
+    overflow-y: auto;
+    padding-right: 5px;
+}
+
+.tools-buttons button{
+    padding: 10px;
+    border: none;
+    border-radius: 12px;
+    background: #3f51b5;
+    color: white;
+    font-weight: 600;
+    cursor: pointer;
+    transition: 0.25s;
+}
+
+.tools-buttons button:hover{
+    background:#1a237e;
+    transform: scale(1.03);
+}
+
+/* Mobile fix */
+@media(max-width:600px){
+    .tools-panel{
+        width: 85vw;
+        height: 40vh;
+    }
+}
+/* ✅ Canvas overlay */
+#editCanvas{
+    position:absolute;
+    max-width:85%;
+    max-height:80%;
+    border-radius:12px;
+    display:none;
+}
+
+/* ✅ tool action bar */
+.tool-actions{
+    position:absolute;
+    bottom:90px;
+    left:50%;
+    transform:translateX(-50%);
+    display:none;
+    gap:10px;
+    z-index:2000;
+}
+
+.tool-actions button{
+    padding:10px 16px;
+    border:none;
+    border-radius:20px;
+    font-weight:600;
+    cursor:pointer;
+    color:white;
+    background:#3f51b5;
+    transition:0.3s;
+}
+
+.tool-actions button:hover{
+    background:#1a237e;
+}
+/* ✅ Brush Controls */
+.brush-controls{
+    position:absolute;
+    bottom:150px;
+    left:50%;
+    transform:translateX(-50%);
+    display:none;
+    gap:15px;
+    background:rgba(255,255,255,0.95);
+    padding:10px 16px;
+    border-radius:18px;
+    z-index:3000;
+    align-items:center;
+    box-shadow:0 6px 20px rgba(0,0,0,0.25);
+}
+
+.brush-controls label{
+    font-size:13px;
+    font-weight:600;
+    color:#000;
+    display:flex;
+    align-items:center;
+    gap:8px;
+}
+
+#brushColor{
+    width:40px;
+    height:35px;
+    border:none;
+    cursor:pointer;
+    padding:0;
+}
+
+#brushSize{
+    width:120px;
+}
+/* ✅ Custom button fixed top-right */
+
+
+
+.custom-btn:hover{
+    transform: scale(1.08);
+    filter: brightness(1.1);
+}
+/* ✅ Slightly smaller professional buttons */
+.filter-toggle,
+.search-btn,
+.global-btn,
+.custom-btn,
+.logout-btn{
+    padding: 8px 14px;        /* smaller but not too small */
+    font-size: 13px;
+    border-radius: 22px;
+    box-shadow: 0 3px 10px rgba(0,0,0,0.2);
+}
+
+/* ✅ Keep Custom + Logout at top-right */
+
+
+/* ✅ Logout button (top-right near Custom Image) */
+
+
+.logout-btn:hover{
+    background: #d32f2f;
+    transform: scale(1.08);
+}
+
+/* ✅ TOP RIGHT BUTTON GROUP */
+.top-right-group{
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    display: flex;
+    gap: 12px;           /* ✅ spacing between buttons */
+    z-index: 6000;
+}
+
+/* ✅ same style for all buttons */
+.top-right-group button{
+    padding: 8px 14px;
+    font-size: 13px;
+    border-radius: 22px;
+    border: none;
+    cursor: pointer;
+    font-weight: 700;
+    box-shadow: 0 3px 10px rgba(0,0,0,0.2);
+    transition: 0.3s;
+}
+
+.top-right-group button:hover{
+    transform: scale(1.08);
+    filter: brightness(1.1);
+}
+
+/* Specific colors */
+.top-right-group .custom-btn{
+    background: #000;
+    color: #fff;
+}
+
+.top-right-group .ai-btn{
+    background: #7fd8ff;
+    color: #000;
+}
+
+.top-right-group .logout-btn{
+    background: #f44336;
+    color: white;
+}
+
+
+
+
+
+
+
+
+</style>
+</head>
+
+<body>
+
+<h1>Wallpaper Wallet</h1>
+
+
+
+<!-- Image Filters -->
+<!-- Image Filters (Top-right corner) -->
+
+<div class="filter-container">
+
+    <button class="filter-toggle" id="categoryMainBtn" onclick="toggleCategoryMenu()">Category</button>
+    <!-- ✅ SEARCH -->
+<div class="search-wrap">
+    <button class="search-btn" onclick="toggleSearch()">Search</button>
+
+    <!-- ✅ CATEGORY SEARCH BOX -->
+    <div class="search-box" id="searchBox">
+        <span class="search-close" onclick="closeSearch()">×</span>
+        <input type="text" id="searchInput" placeholder="Search category... (Ex: Nature)">
+        <div class="search-results" id="searchResults"></div>
+    </div>
+
+    <!-- ✅ GLOBAL SEARCH BUTTON -->
+    <button class="global-btn" onclick="toggleGlobalSearch()">Global</button>
+
+    <!-- ✅ GLOBAL SEARCH BOX -->
+    <div class="search-box" id="globalSearchBox">
+        <span class="search-close" onclick="closeGlobalSearch()">×</span>
+        <input type="text" id="globalSearchInput" placeholder="Search wallpapers globally... (Ex: Lion)">
+        <button class="global-search-go" onclick="runGlobalSearch()">Search</button>
+    </div>
+</div>
+
+
+
+
+<div class="top-right-group">
+    <button class="custom-btn" onclick="openCustomUpload()">Custom Image</button>
+    <button class="ai-btn" onclick="openAIGenerator()">AI Generator</button>
+    <button class="logout-btn" onclick="logout()">Logout</button>
+</div>
+
+
+<input type="file" id="customUpload" accept="image/*" style="display:none;" onchange="loadCustomImage(event)">
+
+    <button class="filter-toggle" onclick="toggleFilters()">Filter</button>
+    <button class="filter-toggle" onclick="toggleTools()">Tools</button>
+
+<!-- ✅ TOOLS PANEL -->
+<div id="toolsPanel" class="tools-panel">
+    <span class="tools-close" onclick="closeTools()">×</span>
+    <h4>Tools</h4>
+
+    <div class="tools-buttons">
+        <button onclick="toolAction('crop')">Crop</button>
+        <button onclick="toolAction('brush')">Brush</button>
+        <button onclick="toolAction('grain')">Grainy Film</button>
+        <button onclick="toolAction('noir')">Noir</button>
+        <button onclick="toolAction('vignette')">Vignette</button>
+        <button onclick="toolAction('glamour')">Glamour Glow</button>
+        <button onclick="toolAction('drama')">Drama</button>
+        <button onclick="toolAction('rotate')">Rotate</button>
+        <button onclick="toolAction('healing')">Healing</button>
+    </div>
+</div>
+
+
+    <button class="filter-toggle editor-btn" onclick="toggleEditor()">Editor</button>
+
+     <div id="categoryDropdown" class="category-dropdown"></div>
+  <div class="filter-buttons" id="filterOptions">
+    <button onclick="applyFilter('original')">Original</button>
+    <button onclick="applyFilter('grayscale')">Grayscale</button>
+    <button onclick="applyFilter('polarized')">Polarized</button>
+    <button onclick="applyFilter('blur')">Blur</button>
+    <button onclick="applyFilter('sepia')">Sepia</button>
+
+    <!-- ✅ NEW FILTERS -->
+    <button onclick="applyFilter('vintage')">Vintage</button>
+    <button onclick="applyFilter('hdr')">HDR</button>
+    <button onclick="applyFilter('cinematic')">Cinematic</button>
+    <button onclick="applyFilter('lomo')">Lomo</button>
+    <button onclick="applyFilter('clarendon')">Clarendon</button>
+    <button onclick="applyFilter('juno')">Juno</button>
+    <button onclick="applyFilter('lark')">Lark</button>
+    <button onclick="applyFilter('gingham')">Gingham</button>
+    <button onclick="applyFilter('valencia')">Valencia</button>
+    <!-- ✅ MORE FILTERS -->
+<button onclick="applyFilter('crema')">Crema</button>
+<button onclick="applyFilter('rise')">Rise</button>
+<button onclick="applyFilter('mayfair')">Mayfair</button>
+<button onclick="applyFilter('sierra')">Sierra</button>
+<button onclick="applyFilter('hudson')">Hudson</button>
+<button onclick="applyFilter('inkwell')">Inkwell</button>
+<button onclick="applyFilter('toaster')">Toaster</button>
+<button onclick="applyFilter('nashville')">Nashville</button>
+<button onclick="applyFilter('1977')">1977</button>
+<button onclick="applyFilter('kelvin')">Kelvin</button>
+<button onclick="applyFilter('willow')">Willow</button>
+<button onclick="applyFilter('slumber')">Slumber</button>
+<button onclick="applyFilter('perpetua')">Perpetua</button>
+<button onclick="applyFilter('reyes')">Reyes</button>
+<button onclick="applyFilter('lofi')">Lo-Fi</button>
+<button onclick="applyFilter('aden')">Aden</button>
+<button onclick="applyFilter('xpro2')">X-Pro II</button>
+
+</div>
+
+
+    <!-- CUSTOM EDITOR PANEL -->
+    <div id="editorPanel">
+        <h4>Custom Editor</h4>
+
+        <label>Brightness
+            <input type="range" min="0" max="100" value="50" oninput="updateEditor()">
+        </label>
+
+        <label>Contrast
+            <input type="range" min="0" max="100" value="50" oninput="updateEditor()">
+        </label>
+
+        <label>Saturation
+            <input type="range" min="0" max="100" value="50" oninput="updateEditor()">
+        </label>
+
+        <label>Warmth
+            <input type="range" min="0" max="100" value="0" oninput="updateEditor()">
+        </label>
+        <label>Shadow
+    <input type="range" min="0" max="20" value="0" oninput="updateEditor()">
+</label>
+
+<label>Highlight
+    <input type="range" min="0" max="50" value="0" oninput="updateEditor()">
+</label>
+
+<label>Sharpness
+    <input type="range" min="0" max="1" step="0.1" value="0" oninput="updateEditor()">
+</label>
+
+    </div>
+
+</div>
+
+
+
+
+
+
+<div class="controls">
+    <button id="backButton" style="display:none;" onclick="goBack()">× Back</button>
+</div>
+
+
+
+
+<div class="gallery" id="gallery"></div>
+
+<div class="lightbox" id="lightbox">
+    <span class="close" onclick="closeLightbox()">×</span>
+    <span class="prev" onclick="navigate(-1)">❮</span>
+    <img id="lightboxImage">
+    <!-- ✅ CANVAS FOR EDITING -->
+<canvas id="editCanvas"></canvas>
+
+<!-- ✅ AI Generator Modal -->
+<div id="aiModal" style="
+    display:none;
+    position:fixed;
+    inset:0;
+    background:rgba(0,0,0,0.75);
+    z-index:9000;
+    align-items:center;
+    justify-content:center;
+">
+  <div style="
+      width:92%;
+      max-width:520px;
+      background:white;
+      border-radius:18px;
+      padding:18px;
+      box-shadow:0 10px 30px rgba(0,0,0,0.4);
+      text-align:center;
+      position:relative;
+  ">
+
+    <span onclick="closeAIGenerator()" style="
+        position:absolute;
+        top:10px;
+        right:15px;
+        font-size:26px;
+        font-weight:bold;
+        cursor:pointer;
+    ">×</span>
+
+    <h2 style="margin:8px 0 15px;">AI Generator 🎬</h2>
+
+    <p style="font-size:13px; margin-bottom:15px; color:#333;">
+      Upload or use selected wallpaper to generate <b>8 seconds HD animation</b>
+    </p>
+
+    <!-- ✅ Preview image -->
+    <img id="aiPreviewImg" style="
+        width:100%;
+        max-height:260px;
+        object-fit:cover;
+        border-radius:14px;
+        display:none;
+        box-shadow:0 6px 15px rgba(0,0,0,0.2);
+        margin-bottom:12px;
+    ">
+
+    <!-- ✅ file input -->
+    <input type="file" id="aiUpload" accept="image/*" style="margin:12px 0;" />
+
+    <button class="filter-toggle global-btn" onclick="generateAIVideo()" style="width:100%; margin-top:10px;">
+      Generate 8s Video
+    </button>
+
+    <div id="aiStatus" style="margin-top:12px; font-size:13px; font-weight:600;"></div>
+
+    <!-- ✅ Video result -->
+    <video id="aiResultVideo" controls style="
+        width:100%;
+        margin-top:15px;
+        border-radius:14px;
+        display:none;
+    "></video>
+
+    <a id="aiDownloadLink" style="
+        display:none;
+        margin-top:15px;
+        display:block;
+        padding:10px;
+        background:#4caf50;
+        color:white;
+        border-radius:12px;
+        text-decoration:none;
+        font-weight:700;
+    " download>⬇ Download Video</a>
+
+  </div>
+</div>
+
+
+<!-- ✅ TOOL ACTION BUTTONS -->
+<div id="toolActions" class="tool-actions">
+    <button onclick="applyCrop()">✅ Apply Crop</button>
+    <button onclick="stopTools()">✖ Close Tool</button>
+</div>
+<!-- ✅ BRUSH CONTROLS -->
+<div id="brushControls" class="brush-controls">
+    <label>🎨 Color
+        <input type="color" id="brushColor" value="#ffff00">
+    </label>
+
+    <label>🖌 Size
+        <input type="range" id="brushSize" min="1" max="50" value="10">
+    </label>
+</div>
+
+
+    <button id="downloadBtn" onclick="downloadImage()">⬇ Download</button>
+
+    <span class="next" onclick="navigate(1)">❯</span>
+</div>
+
+<script>
+
+
+
+
+if(!localStorage.getItem("token")){
+  window.location.href = "home.html";
+}
+
+
+
+    const token = localStorage.getItem("token");
+
+if(!token){
+  alert("Please login first!");
+  window.location.href = "login.html";
+}
+
+    const UNSPLASH_KEY = "epDmLparCxf60Bg1IAhcw9v_7ATSDwIm8geCJisqbXU";
+
+/* ======================
+    1. DATA LAYER
+====================== */
+const galleryData = [
+  
+   {
+        category:"Nature",
+        images:[
+            "https://cdn.pixabay.com/photo/2018/01/14/23/12/nature-3082832_960_720.jpg",
+            "https://picsum.photos/id/1016/600/400",
+            "https://images.unsplash.com/photo-1506104489822-562ca25152fe?fm=jpg&q=60&w=3000&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8M3x8NGslMjBuYXR1cmV8ZW58MHx8MHx8fDA%3D",
+            "https://cdn.wallpapersafari.com/5/71/MszZ4K.jpg",
+            "https://picsum.photos/id/1035/600/400",
+            "https://picsum.photos/id/1043/600/400",
+            "https://picsum.photos/id/1056/600/400",
+            "https://cdn.soft112.com/nature-qhd-wallpapers/00/00/0H/3M/00000H3M0W/pad_screenshot.jpg",
+            "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQw-OpCJipWp3XkTnbSJm3WwOl3dLfdiCV7Lg&s",
+            "https://tiimg.tistatic.com/fp/1/005/026/nature-wallpaper-112.jpg",
+            "https://images.wallpapersden.com/image/download/best-2020-landscape_bGpqbGWUmZqaraWkpJRoaGVmrWZuZ2g.jpg",
+            "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSUyP-8avMskClIffbdiRkEdXO1b9Md5s5X_Q&s",
+            "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQbPG9dmbluQ41YkfobcIgL97AUoflxDMmxLQ&s",
+            "https://i.pinimg.com/736x/41/9d/56/419d56cbc9420520d3eadc87b4f65d0f.jpg",
+            "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTTqbXAHWsmMVx5XAYJsCjqOpGmo5cZZ8nUcg&s",
+            "https://wallpapercave.com/wp/wp5247176.jpg",
+            "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRBgKe5izFlsfFFlOJmn9tQJDuiZKSg2M7SKA&s",
+            "https://img.freepik.com/premium-photo/black-gray-background-with-dark-background-dark-background-with-small-holes_974629-95212.jpg?semt=ais_hybrid&w=740&q=80",
+            "https://w0.peakpx.com/wallpaper/106/811/HD-wallpaper-blue-night-big-moon-anime-scenery-anime-night-scenery.jpg",
+            "https://www.pixelstalk.net/wp-content/uploads/2016/10/Anime-Landscape-Wallpaper-HD.jpg",
+            "https://wallpapercave.com/wp/wp3595729.jpg",
+            "https://img.goodfon.com/wallpaper/big/7/46/anime-art-priroda-noch-nebo.webp",
+            "https://images.wallpapersden.com/image/download/love-and-nature_a2tuZmaUmZqaraWkpJRmbmdlrWZlbWU.jpg",
+            "https://4kwallpapers.com/images/wallpapers/windows-11-landscape-scenery-sunrise-stock-day-light-3840x2160-5661.jpg",
+            "https://store-images.s-microsoft.com/image/apps.26620.13682773009232620.62a18cea-40b3-43f1-811b-46ef9d15331b.96a2c700-d04f-4128-b94c-596de2c4cc83?h=1280",
+            "https://images.pexels.com/photos/1421903/pexels-photo-1421903.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500",
+            "https://media.istockphoto.com/id/809971888/photo/night-sky-landscape.jpg?s=612x612&w=0&k=20&c=ku3RWu4DQ8ErN-KbT1Act72LMocTwSAAm3UDkLiako0=",
+            "https://wallpapers.com/images/hd/dark-nature-1408-x-880-background-6r0w9p6nmtlng7ki.jpg",
+            "https://st.depositphotos.com/1550726/2151/i/450/depositphotos_21510387-stock-photo-dark-forest-with-fog.jpg",
+            "https://images.unsplash.com/photo-1522911715181-6ce196f07c76?fm=jpg&q=60&w=3000&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8c3VucmlzZSUyMHdhbGxwYXBlcnxlbnwwfHwwfHx8MA%3D%3D"
+        ]
+    },
+    {
+        category:"Technology",
+        images:[
+            "https://images.unsplash.com/photo-1531297484001-80022131f5a1?fm=jpg&q=60&w=3000&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8M3x8dGVjaHxlbnwwfHwwfHx8MA%3D%3D",
+            "https://images6.alphacoders.com/648/648552.jpg",
+            "https://i.pinimg.com/736x/81/b3/96/81b396c435478071b2f7045eb479b45c.jpg",
+            "https://as2.ftcdn.net/jpg/01/34/50/05/1000_F_134500566_gKW30lvDwu3KtZeu7z6UdmTNZxJ97D3e.jpg",
+            "https://images.wallpapersden.com/image/download/high-tech-earth_bGdqZm6UmZqaraWkpJRnamtlrWZpaWU.jpg",
+            "https://img.freepik.com/free-vector/big-data-concept-background_1182-2013.jpg?semt=ais_hybrid&w=740&q=80",
+            "https://c4.wallpaperflare.com/wallpaper/163/392/912/map-wold-map-technology-world-wallpaper-preview.jpg",
+            "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSmEzh5ymHjiS-DUCXwxGQN3bH1ipsyYtGYBA&s",
+            "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT3CrNKwOgAyad98TwwAzsU9AgDvDDIhXEK8A&s",
+            "https://wallpapersok.com/images/high/innovative-4k-tech-enhances-our-world-o8lug3koljipkown.jpg",
+            "https://png.pngtree.com/thumb_back/fh260/background/20250423/pngtree-futuristic-ai-technology-source-and-related-content-image_17208471.jpg",
+            "https://img.freepik.com/premium-photo/abstract-digital-art-futuristic-ai-circuitry_1121478-14836.jpg?semt=ais_hybrid&w=740&q=80",
+            "https://img.freepik.com/free-photo/digital-art-ai-technology-background_23-2151719636.jpg?semt=ais_hybrid&w=740&q=80",
+            "https://i.pinimg.com/736x/45/e0/ec/45e0ec856d4b0a5897433ed13f43b5dc.jpg",
+            "https://c4.wallpaperflare.com/wallpaper/945/487/732/ai-art-astronaut-spacesuit-space-science-fiction-hd-wallpaper-preview.jpg",
+            "https://pixelz.cc/wp-content/uploads/2018/09/iot-internet-of-things-uhd-4k-wallpaper.jpg",
+            "https://media.istockphoto.com/id/1184401187/photo/internet-of-things-wireless-communication-network-abstract-image-visual.jpg?s=612x612&w=0&k=20&c=Thb4RuYqcfOHMepqOfazEhU3ZIp5J_eTerZ5GxxreOQ=",
+            "https://5.imimg.com/data5/SELLER/Default/2023/4/298117318/PT/KC/PO/40699717/vlsi-training-500x500.jpg",
+            "https://media.licdn.com/dms/image/v2/D5612AQH1uD3HG8tXbw/article-cover_image-shrink_720_1280/article-cover_image-shrink_720_1280/0/1704982907259?e=2147483647&v=beta&t=S1ha6LP5CezUx8ACTUcXbMI9jObPAp2oVUo8XY3HQZw",
+            "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTX0c3UQYkZEmwIyWUu9bHVL7TucWK588eORQ&s",
+            "https://www.mediatek.com/hubfs/MediaTek%20Assets/Images/Home%20Page/D9500-homepage-banner-3-Dark-BG-1.jpg",
+            "https://etimg.etb2bimg.com/photo/124997208.cms",
+            "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQgneBdjIYmet1WbqV865cJ_0eDFUaGU33jmw&s",
+            "https://www.squaredtech.co/wp-content/uploads/2025/09/Apple-A19-chip.webp",
+            "https://w0.peakpx.com/wallpaper/622/59/HD-wallpaper-black-apple-apple-iphone-thumbnail.jpg",
+            "https://i.pinimg.com/736x/74/79/a0/7479a0a02cf333e01e13d1b6d08af800.jpg",
+            "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTlVfK9Wu1roKyRGKcwSnJCOhhqqoZhlQU0vA&s",
+            "https://images4.alphacoders.com/757/thumb-1920-757255.png",
+            "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR_emkwJfoMETDrLirj06a2lSPpfFq5w8wlgQ&s",
+            "https://extension.harvard.edu/wp-content/uploads/sites/8/2024/07/tech.jpg"
+        ]
+    },
+    {
+        category:"Sports",
+        images:[
+           "https://wallpapers.com/images/hd/4k-sports-background-u1bu9ttv61ysok9o.jpg",
+           "https://wallpapers.com/images/hd/sports-iphone-477krre2cp9wdzjl.jpg",
+           "https://img.freepik.com/free-photo/different-sport-balls_1048-2681.jpg?semt=ais_hybrid&w=740&q=80",
+           "https://www.shutterstock.com/shutterstock/videos/3515853341/thumb/1.jpg?ip=x480",
+           "https://c4.wallpaperflare.com/wallpaper/726/945/213/sports-high-resolution-desktop-backgrounds-wallpaper-preview.jpg",
+           "https://c4.wallpaperflare.com/wallpaper/808/763/814/sports-background-hd-wallpaper-preview.jpg",
+           "https://i.pinimg.com/236x/94/23/50/9423501a8c606b4b7efa34d394a3cba6.jpg",
+           "https://www.xtrafondos.com/wallpapers/vertical/lionel-messi-futbol-11521.jpg",
+           "https://w0.peakpx.com/wallpaper/860/607/HD-wallpaper-football-futbol.jpg",
+           "https://i.pinimg.com/736x/c0/6e/2c/c06e2cdd1086c9bc77bf6f211301bab0.jpg",
+           "https://i.pinimg.com/736x/bb/15/ae/bb15ae1b86cfa0c4fd27ffa58e98a175.jpg",
+           "https://i.pinimg.com/736x/ba/4f/c8/ba4fc8e362c91e642085e9bf49cc33fa.jpg",
+           "https://i.pinimg.com/736x/a3/b7/45/a3b745a93cbd880f26358cd410b94caf.jpg",
+           "https://i.pinimg.com/1200x/32/80/4b/32804bf25996e206ace9d1d5f0f78df3.jpg",
+           "https://i.pinimg.com/1200x/a2/c3/59/a2c35974ae3d71003e485098b3ac4e06.jpg",
+           "https://i.pinimg.com/736x/30/aa/ca/30aaca435d2c43c5cfa4dfc7af7d2db9.jpg",
+           "https://i.pinimg.com/736x/8e/bf/f2/8ebff2e06958c636853be76619c556da.jpg",
+           "https://i.pinimg.com/736x/55/e0/e4/55e0e4b73d7f5850f01115d0ff377b42.jpg",
+           "https://i.pinimg.com/736x/61/99/0a/61990a7da04c9388dfb07f8a575b548a.jpg",
+           "https://i.pinimg.com/736x/d8/b2/19/d8b219ab2673945f3a67d6d5a379313d.jpg",
+           "https://i.pinimg.com/1200x/60/d9/7f/60d97f6b0bedee77970ba33ad55ce330.jpg",
+           "https://i.pinimg.com/736x/e6/b9/5a/e6b95a7fb706563d92e423b2e173a2f0.jpg",
+           "https://i.pinimg.com/736x/93/10/07/931007f27cb397d1f63a3e47e23fa1af.jpg",
+           "https://i.pinimg.com/1200x/c0/1b/c6/c01bc6b3e2cd02e05587c69320efa313.jpg",
+           "https://i.pinimg.com/1200x/a5/e5/0e/a5e50e5d374a8454a2a6caa39729633f.jpg",
+           "https://i.pinimg.com/1200x/fc/d8/1f/fcd81f7ce0e330b32ee057db1c1b71bf.jpg",
+           "https://i.pinimg.com/736x/c7/e1/f2/c7e1f253a4dffcd04164a3969289d21a.jpg"
+        ]
+    },
+    {
+        category:"Medical",
+        images:[
+         "https://i.pinimg.com/736x/91/57/ad/9157ad28ef2313633034f3bac7f2b006.jpg",
+         "https://i.pinimg.com/736x/69/73/ce/6973ce3ff8eb3ee4731238f7035fa44e.jpg",
+         "https://i.pinimg.com/736x/75/af/64/75af648a2dc86ec75f9a55ccac965ba7.jpg",
+         "https://i.pinimg.com/736x/8c/6c/a3/8c6ca3df5bcb53c07ac989b31a5f9381.jpg",
+         "https://i.pinimg.com/736x/4d/91/7e/4d917e59b28fee5a337fd5ba40ba4c33.jpg",
+         "https://i.pinimg.com/736x/c1/6b/f8/c16bf85fc9b016cc0ee1a184ccad8958.jpg",
+         "https://i.pinimg.com/736x/77/50/50/7750509a7626fb60cefd01cd9180f3d6.jpg",
+         "https://i.pinimg.com/736x/58/86/07/588607cdc26cce68c07c5c3fcc603d87.jpg",
+         "https://i.pinimg.com/736x/0f/9a/38/0f9a386167854251afeb672172469dca.jpg",
+         "https://i.pinimg.com/736x/0a/eb/a9/0aeba9e3020c6c7b5faa350d241877b8.jpg",
+         "https://i.pinimg.com/1200x/05/f7/12/05f712684cf2871674bd0bafc5dab197.jpg",
+         "https://i.pinimg.com/736x/cf/d8/a9/cfd8a9aeed342ed0ef27dce35cbc9aa8.jpg",
+         "https://i.pinimg.com/1200x/c1/dc/8b/c1dc8b05455a4cf972eb42d5bf9e55e4.jpg",
+         "https://i.pinimg.com/736x/ba/fa/4b/bafa4b9f678097342615d8311251f6eb.jpg",
+         "https://i.pinimg.com/736x/e3/74/99/e37499563019c536ce2af0f48e8b90a4.jpg",
+         "https://i.pinimg.com/1200x/07/92/5c/07925ce49a2786e01450a291c302f4c9.jpg",
+         "https://i.pinimg.com/736x/e2/3a/01/e23a0186949b1656c6eb49864b71dc1f.jpg",
+         "https://i.pinimg.com/736x/d9/b5/79/d9b5799c7289126d3b30380b2ad1743c.jpg",
+         "https://i.pinimg.com/1200x/f4/cf/c5/f4cfc563bea916b9771103c34160842e.jpg",
+         "https://i.pinimg.com/736x/dc/3e/3d/dc3e3ddeb7e56895178879855b75a943.jpg",
+         "https://i.pinimg.com/736x/6e/d1/c5/6ed1c59d199f091ba6461c83c80299b1.jpg",
+         "https://i.pinimg.com/736x/be/b6/9f/beb69f16f8f2d603f8e08f74c1a4cab7.jpg",
+         "https://i.pinimg.com/736x/e3/48/1f/e3481f79e99353e6c0ddec43ae6879dc.jpg",
+         "https://i.pinimg.com/736x/28/4e/3e/284e3eb23b1d995845e991ed0f6d86d1.jpg",
+         "https://i.pinimg.com/736x/1a/78/1e/1a781e1cfefa350ddbe1de173a5ae8e0.jpg",
+         "https://i.pinimg.com/736x/95/04/5f/95045fafecf5a86dbf704012906fb91b.jpg",
+         "https://i.pinimg.com/736x/e3/d4/32/e3d4322b0d6ecf157920a83176916cef.jpg",
+         "https://i.pinimg.com/736x/ea/93/23/ea93236f468f58a7eec5d5febb69110e.jpg",
+         "https://i.pinimg.com/1200x/23/62/d2/2362d240f40db505846fb45352a5ec3b.jpg",
+         "https://i.pinimg.com/1200x/86/48/0e/86480e78a0200c6da5b3ef06d52a3600.jpg"
+        ]
+    },
+    {
+        category:"Architecture",
+        images:[
+            "https://i.pinimg.com/736x/dc/2b/a6/dc2ba6e5e11e12061e2f9f999b083d1f.jpg",
+            "https://i.pinimg.com/1200x/7c/1e/00/7c1e00a24f2210a8ec9fc24d1fa35ba4.jpg",
+            "https://i.pinimg.com/736x/43/d5/6e/43d56e47ba59eed886705a8473b7dba9.jpg",
+            "https://i.pinimg.com/736x/cf/98/55/cf98556f0690b914d58a3e36def3c616.jpg",
+            "https://i.pinimg.com/1200x/e1/4c/37/e14c371c007ddfe5879b068ac1735fcb.jpg",
+            "https://i.pinimg.com/1200x/c8/84/dd/c884ddad721bd4e8de6cf7cc71ca49ba.jpg",
+            "https://i.pinimg.com/1200x/b0/30/bd/b030bd0d802d33ff6700e4491a5e7151.jpg",
+            "https://i.pinimg.com/736x/09/13/5c/09135cdb7c1a476d0dea2a58436af5b5.jpg",
+            "https://i.pinimg.com/1200x/d0/92/2d/d0922dd468d026c506ab95582a10fa5c.jpg",
+            "https://i.pinimg.com/736x/05/22/9a/05229a2c5a1caf945ba95614259482e0.jpg",
+            "https://i.pinimg.com/1200x/29/2c/d6/292cd6a3a7d058d0afb4c43b09dc1092.jpg",
+            "https://i.pinimg.com/1200x/94/2f/cb/942fcb3edb34bce390710a00f497e447.jpg",
+            "https://i.pinimg.com/1200x/4c/74/b1/4c74b10999a1fe3958ed0f76ae1bea22.jpg",
+            "https://i.pinimg.com/736x/0c/72/3a/0c723af98c9470ffba51c3e8008f7377.jpg",
+            "https://i.pinimg.com/1200x/8e/c9/68/8ec968254ba704751736406c787a3d08.jpg",
+            "https://i.pinimg.com/1200x/56/8a/04/568a04c50142e4088b2ad4ea19c532d3.jpg",
+            "https://i.pinimg.com/736x/8c/42/4a/8c424aa1c75fb7fb53414a11ee595f4a.jpg",
+            "https://i.pinimg.com/1200x/c2/29/40/c229404578cf5ae4399391a7ad456204.jpg",
+            "https://i.pinimg.com/736x/f9/f9/d4/f9f9d45c56718a0217e44c955f59b45a.jpg",
+            "https://i.pinimg.com/736x/85/64/cc/8564cc516c0ff83b41e43821184590ba.jpg",
+            "https://i.pinimg.com/736x/88/85/0b/88850ba5c7ae1876eee8be6e7f2c396c.jpg",
+            "https://i.pinimg.com/1200x/2e/48/03/2e48030076e6389f0ff0e9f56343f4c5.jpg",
+            "https://i.pinimg.com/1200x/53/e1/80/53e18057de8d8f52accb158d184bb76d.jpg",
+            "https://i.pinimg.com/736x/e5/34/24/e53424490ca54a9266e50ca34a965a83.jpg",
+            "https://i.pinimg.com/1200x/75/51/be/7551bebc20ed50ef1dc6253fd31588b0.jpg",
+            "https://i.pinimg.com/736x/aa/a9/bc/aaa9bcf4bd9a7e509f5dcbb47899fef6.jpg",
+            "https://i.pinimg.com/1200x/b5/ec/b4/b5ecb432f33f10577d2dba3b6a463436.jpg",
+            "https://i.pinimg.com/736x/01/44/fb/0144fb3423e443d1da7d6964cc45cff2.jpg",
+            "https://i.pinimg.com/736x/3e/12/34/3e123464fb0f15b6e77f03eb646def66.jpg",
+            "https://i.pinimg.com/1200x/72/2d/78/722d780c1502b7e5f0f200715eb50703.jpg"
+        ]
+    },
+    {
+        category:"Space",
+        images:[
+            "https://picsum.photos/id/1001/600/400",
+            "https://picsum.photos/id/1002/600/400",
+            "https://picsum.photos/id/1003/600/400",
+            "https://picsum.photos/id/1004/600/400",
+            "https://picsum.photos/id/1005/600/400",
+            "https://picsum.photos/id/1006/600/400",
+            "https://picsum.photos/id/1007/600/400",
+            "https://picsum.photos/id/1008/600/400",
+            "https://picsum.photos/id/1009/600/400",
+            "https://picsum.photos/id/1010/600/400"
+        ]
+    },
+    {
+        category:"Animals",
+        images:[
+            "https://picsum.photos/id/237/600/400",
+            "https://picsum.photos/id/238/600/400",
+            "https://picsum.photos/id/239/600/400",
+            "https://picsum.photos/id/240/600/400",
+            "https://picsum.photos/id/241/600/400",
+            "https://picsum.photos/id/242/600/400",
+            "https://picsum.photos/id/243/600/400",
+            "https://picsum.photos/id/244/600/400",
+            "https://picsum.photos/id/245/600/400",
+            "https://picsum.photos/id/246/600/400"
+        ]
+    },
+    {
+        category:"Food",
+        images:[
+            "https://picsum.photos/id/292/600/400",
+            "https://picsum.photos/id/293/600/400",
+            "https://picsum.photos/id/294/600/400",
+            "https://picsum.photos/id/295/600/400",
+            "https://picsum.photos/id/296/600/400",
+            "https://picsum.photos/id/297/600/400",
+            "https://picsum.photos/id/298/600/400",
+            "https://picsum.photos/id/299/600/400",
+            "https://picsum.photos/id/300/600/400",
+            "https://picsum.photos/id/301/600/400"
+        ]
+    },
+    {
+        category:"Travel",
+        images:[
+            "https://picsum.photos/id/1031/600/400",
+            "https://picsum.photos/id/1032/600/400",
+            "https://picsum.photos/id/1033/600/400",
+            "https://picsum.photos/id/1034/600/400",
+            "https://picsum.photos/id/1035/600/400",
+            "https://picsum.photos/id/1036/600/400",
+            "https://picsum.photos/id/1037/600/400",
+            "https://picsum.photos/id/1038/600/400",
+            "https://picsum.photos/id/1039/600/400",
+            "https://picsum.photos/id/1040/600/400"
+        ]
+    },
+    {
+        category:"Art",
+        images:[
+            "https://picsum.photos/id/870/600/400",
+            "https://picsum.photos/id/871/600/400",
+            "https://picsum.photos/id/872/600/400",
+            "https://picsum.photos/id/873/600/400",
+            "https://picsum.photos/id/874/600/400",
+            "https://picsum.photos/id/875/600/400",
+            "https://picsum.photos/id/876/600/400",
+            "https://picsum.photos/id/877/600/400",
+            "https://picsum.photos/id/878/600/400",
+            "https://picsum.photos/id/879/600/400"
+        ]
+    },
+    {
+    category: "Fashion",
+    images: [
+        "https://picsum.photos/id/1101/600/400",
+        "https://picsum.photos/id/1102/600/400",
+        "https://picsum.photos/id/1103/600/400",
+        "https://picsum.photos/id/1104/600/400",
+        "https://picsum.photos/id/1105/600/400",
+        "https://picsum.photos/id/1106/600/400",
+        "https://picsum.photos/id/1107/600/400",
+        "https://picsum.photos/id/1108/600/400",
+        "https://picsum.photos/id/1109/600/400",
+        "https://picsum.photos/id/1110/600/400"
+    ]
+},
+{
+    category: "Music",
+    images: [
+        "https://picsum.photos/id/1201/600/400",
+        "https://picsum.photos/id/1202/600/400",
+        "https://picsum.photos/id/1203/600/400",
+        "https://picsum.photos/id/1204/600/400",
+        "https://picsum.photos/id/1205/600/400",
+        "https://picsum.photos/id/1206/600/400",
+        "https://picsum.photos/id/1207/600/400",
+        "https://picsum.photos/id/1208/600/400",
+        "https://picsum.photos/id/1209/600/400",
+        "https://picsum.photos/id/1210/600/400"
+    ]
+},
+{
+    category: "Cars",
+    images: [
+        "https://picsum.photos/id/1301/600/400",
+        "https://picsum.photos/id/1302/600/400",
+        "https://picsum.photos/id/1303/600/400",
+        "https://picsum.photos/id/1304/600/400",
+        "https://picsum.photos/id/1305/600/400",
+        "https://picsum.photos/id/1306/600/400",
+        "https://picsum.photos/id/1307/600/400",
+        "https://picsum.photos/id/1308/600/400",
+        "https://picsum.photos/id/1309/600/400",
+        "https://picsum.photos/id/1310/600/400"
+    ]
+},
+{
+    category: "Movies",
+    images: [
+        "https://picsum.photos/id/1401/600/400",
+        "https://picsum.photos/id/1402/600/400",
+        "https://picsum.photos/id/1403/600/400",
+        "https://picsum.photos/id/1404/600/400",
+        "https://picsum.photos/id/1405/600/400",
+        "https://picsum.photos/id/1406/600/400",
+        "https://picsum.photos/id/1407/600/400",
+        "https://picsum.photos/id/1408/600/400",
+        "https://picsum.photos/id/1409/600/400",
+        "https://picsum.photos/id/1410/600/400"
+    ]
+},
+{
+    category: "Books",
+    images: [
+        "https://picsum.photos/id/1501/600/400",
+        "https://picsum.photos/id/1502/600/400",
+        "https://picsum.photos/id/1503/600/400",
+        "https://picsum.photos/id/1504/600/400",
+        "https://picsum.photos/id/1505/600/400",
+        "https://picsum.photos/id/1506/600/400",
+        "https://picsum.photos/id/1507/600/400",
+        "https://picsum.photos/id/1508/600/400",
+        "https://picsum.photos/id/1509/600/400",
+        "https://picsum.photos/id/1510/600/400"
+    ]
+},
+{
+    category: "Fitness",
+    images: [
+        "https://picsum.photos/id/1601/600/400",
+        "https://picsum.photos/id/1602/600/400",
+        "https://picsum.photos/id/1603/600/400",
+        "https://picsum.photos/id/1604/600/400",
+        "https://picsum.photos/id/1605/600/400",
+        "https://picsum.photos/id/1606/600/400",
+        "https://picsum.photos/id/1607/600/400",
+        "https://picsum.photos/id/1608/600/400",
+        "https://picsum.photos/id/1609/600/400",
+        "https://picsum.photos/id/1610/600/400"
+    ]
+},
+{
+    category: "Gaming",
+    images: [
+        "https://picsum.photos/id/1701/600/400",
+        "https://picsum.photos/id/1702/600/400",
+        "https://picsum.photos/id/1703/600/400",
+        "https://picsum.photos/id/1704/600/400",
+        "https://picsum.photos/id/1705/600/400",
+        "https://picsum.photos/id/1706/600/400",
+        "https://picsum.photos/id/1707/600/400",
+        "https://picsum.photos/id/1708/600/400",
+        "https://picsum.photos/id/1709/600/400",
+        "https://picsum.photos/id/1710/600/400"
+    ]
+},
+{
+    category: "History",
+    images: [
+        "https://picsum.photos/id/1801/600/400",
+        "https://picsum.photos/id/1802/600/400",
+        "https://picsum.photos/id/1803/600/400",
+        "https://picsum.photos/id/1804/600/400",
+        "https://picsum.photos/id/1805/600/400",
+        "https://picsum.photos/id/1806/600/400",
+        "https://picsum.photos/id/1807/600/400",
+        "https://picsum.photos/id/1808/600/400",
+        "https://picsum.photos/id/1809/600/400",
+        "https://picsum.photos/id/1810/600/400"
+    ]
+},
+{
+    category: "Photography",
+    images: [
+        "https://picsum.photos/id/1901/600/400",
+        "https://picsum.photos/id/1902/600/400",
+        "https://picsum.photos/id/1903/600/400",
+        "https://picsum.photos/id/1904/600/400",
+        "https://picsum.photos/id/1905/600/400",
+        "https://picsum.photos/id/1906/600/400",
+        "https://picsum.photos/id/1907/600/400",
+        "https://picsum.photos/id/1908/600/400",
+        "https://picsum.photos/id/1909/600/400",
+        "https://picsum.photos/id/1910/600/400"
+    ]
+},
+{
+    category: "Lifestyle",
+    images: [
+        "https://picsum.photos/id/2001/600/400",
+        "https://picsum.photos/id/2002/600/400",
+        "https://picsum.photos/id/2003/600/400",
+        "https://picsum.photos/id/2004/600/400",
+        "https://picsum.photos/id/2005/600/400",
+        "https://picsum.photos/id/2006/600/400",
+        "https://picsum.photos/id/2007/600/400",
+        "https://picsum.photos/id/2008/600/400",
+        "https://picsum.photos/id/2009/600/400",
+        "https://picsum.photos/id/2010/600/400"
+    ]
+},
+{ category:"Mountains", images:[ "https://source.unsplash.com/600x400/?mountains" ] },
+{ category:"Forest", images:[ "https://source.unsplash.com/600x400/?forest" ] },
+{ category:"Waterfalls", images:[ "https://source.unsplash.com/600x400/?waterfall" ] },
+{ category:"Beach", images:[ "https://source.unsplash.com/600x400/?beach" ] },
+{ category:"Ocean", images:[ "https://source.unsplash.com/600x400/?ocean" ] },
+{ category:"Rivers", images:[ "https://source.unsplash.com/600x400/?river" ] },
+{ category:"Lakes", images:[ "https://source.unsplash.com/600x400/?lake" ] },
+{ category:"Desert", images:[ "https://source.unsplash.com/600x400/?desert" ] },
+{ category:"Snow", images:[ "https://source.unsplash.com/600x400/?snow" ] },
+{ category:"Rain", images:[ "https://source.unsplash.com/600x400/?rain" ] },
+{ category:"Clouds", images:[ "https://source.unsplash.com/600x400/?clouds" ] },
+{ category:"Sunrise", images:[ "https://source.unsplash.com/600x400/?sunrise" ] },
+{ category:"Sunset", images:[ "https://source.unsplash.com/600x400/?sunset" ] },
+{ category:"Sky", images:[ "https://source.unsplash.com/600x400/?sky" ] },
+{ category:"Blue Sky", images:[ "https://source.unsplash.com/600x400/?blue-sky" ] },
+{ category:"Night Sky", images:[ "https://source.unsplash.com/600x400/?night-sky" ] },
+{ category:"Stars", images:[ "https://source.unsplash.com/600x400/?stars" ] },
+{ category:"Milky Way", images:[ "https://source.unsplash.com/600x400/?milky-way" ] },
+{ category:"Galaxy", images:[ "https://source.unsplash.com/600x400/?galaxy" ] },
+
+/* Space sub categories */
+{ category:"Planets", images:[ "https://source.unsplash.com/600x400/?planet" ] },
+{ category:"Moon", images:[ "https://source.unsplash.com/600x400/?moon" ] },
+{ category:"Sun", images:[ "https://source.unsplash.com/600x400/?sun" ] },
+{ category:"Astronaut", images:[ "https://source.unsplash.com/600x400/?astronaut" ] },
+{ category:"Nebula", images:[ "https://source.unsplash.com/600x400/?nebula" ] },
+{ category:"Black Hole", images:[ "https://source.unsplash.com/600x400/?black-hole" ] },
+{ category:"Universe", images:[ "https://source.unsplash.com/600x400/?universe" ] },
+{ category:"Sci-Fi Space", images:[ "https://source.unsplash.com/600x400/?sci-fi-space" ] },
+{ category:"Space Art", images:[ "https://source.unsplash.com/600x400/?space-art" ] },
+
+/* Flowers */
+{ category:"Flowers", images:[ "https://source.unsplash.com/600x400/?flowers" ] },
+{ category:"Roses", images:[ "https://source.unsplash.com/600x400/?roses" ] },
+{ category:"Lavender", images:[ "https://source.unsplash.com/600x400/?lavender" ] },
+{ category:"Tulips", images:[ "https://source.unsplash.com/600x400/?tulips" ] },
+{ category:"Lotus", images:[ "https://source.unsplash.com/600x400/?lotus" ] },
+
+/* Plants */
+{ category:"Plants", images:[ "https://source.unsplash.com/600x400/?plants" ] },
+{ category:"Greenery", images:[ "https://source.unsplash.com/600x400/?greenery" ] },
+{ category:"Leaves", images:[ "https://source.unsplash.com/600x400/?leaves" ] },
+{ category:"Garden", images:[ "https://source.unsplash.com/600x400/?garden" ] },
+{ category:"Tree Wallpapers", images:[ "https://source.unsplash.com/600x400/?trees" ] },
+
+/* Animals sub categories */
+{ category:"Dogs", images:[ "https://source.unsplash.com/600x400/?dog" ] },
+{ category:"Cats", images:[ "https://source.unsplash.com/600x400/?cat" ] },
+{ category:"Wild Animals", images:[ "https://source.unsplash.com/600x400/?wild-animals" ] },
+{ category:"Lions", images:[ "https://source.unsplash.com/600x400/?lion" ] },
+{ category:"Tigers", images:[ "https://source.unsplash.com/600x400/?tiger" ] },
+{ category:"Elephants", images:[ "https://source.unsplash.com/600x400/?elephant" ] },
+{ category:"Birds", images:[ "https://source.unsplash.com/600x400/?birds" ] },
+{ category:"Eagles", images:[ "https://source.unsplash.com/600x400/?eagle" ] },
+{ category:"Butterflies", images:[ "https://source.unsplash.com/600x400/?butterfly" ] },
+{ category:"Fish", images:[ "https://source.unsplash.com/600x400/?fish" ] },
+{ category:"Sea Animals", images:[ "https://source.unsplash.com/600x400/?sea-animal" ] },
+{ category:"Dolphins", images:[ "https://source.unsplash.com/600x400/?dolphin" ] },
+{ category:"Sharks", images:[ "https://source.unsplash.com/600x400/?shark" ] },
+{ category:"Horses", images:[ "https://source.unsplash.com/600x400/?horse" ] },
+{ category:"Wolves", images:[ "https://source.unsplash.com/600x400/?wolf" ] },
+{ category:"Foxes", images:[ "https://source.unsplash.com/600x400/?fox" ] },
+{ category:"Pandas", images:[ "https://source.unsplash.com/600x400/?panda" ] },
+{ category:"Monkeys", images:[ "https://source.unsplash.com/600x400/?monkey" ] },
+{ category:"Reptiles", images:[ "https://source.unsplash.com/600x400/?reptile" ] },
+
+/* Anime */
+{ category:"Anime", images:[ "https://source.unsplash.com/600x400/?anime" ] },
+{ category:"Naruto", images:[ "https://source.unsplash.com/600x400/?naruto" ] },
+{ category:"One Piece", images:[ "https://source.unsplash.com/600x400/?one-piece" ] },
+{ category:"Dragon Ball", images:[ "https://source.unsplash.com/600x400/?dragon-ball" ] },
+{ category:"Attack on Titan", images:[ "https://source.unsplash.com/600x400/?attack-on-titan" ] },
+{ category:"Demon Slayer", images:[ "https://source.unsplash.com/600x400/?demon-slayer" ] },
+{ category:"Jujutsu Kaisen", images:[ "https://source.unsplash.com/600x400/?jujutsu-kaisen" ] },
+{ category:"Pokémon", images:[ "https://source.unsplash.com/600x400/?pokemon" ] },
+{ category:"Tokyo Revengers", images:[ "https://source.unsplash.com/600x400/?tokyo-revengers" ] },
+{ category:"Blue Lock", images:[ "https://source.unsplash.com/600x400/?blue-lock" ] },
+
+/* Gaming Games */
+{ category:"PUBG", images:[ "https://source.unsplash.com/600x400/?pubg" ] },
+{ category:"Free Fire", images:[ "https://source.unsplash.com/600x400/?free-fire" ] },
+{ category:"GTA", images:[ "https://source.unsplash.com/600x400/?gta" ] },
+{ category:"Minecraft", images:[ "https://source.unsplash.com/600x400/?minecraft" ] },
+{ category:"Valorant", images:[ "https://source.unsplash.com/600x400/?valorant" ] },
+{ category:"Call of Duty", images:[ "https://source.unsplash.com/600x400/?call-of-duty" ] },
+{ category:"FIFA", images:[ "https://source.unsplash.com/600x400/?fifa" ] },
+{ category:"Racing Games", images:[ "https://source.unsplash.com/600x400/?racing-game" ] },
+{ category:"PC Gaming", images:[ "https://source.unsplash.com/600x400/?pc-gaming" ] },
+
+/* Cars extra categories */
+{ category:"Sports Cars", images:[ "https://source.unsplash.com/600x400/?sports-car" ] },
+{ category:"Supercars", images:[ "https://source.unsplash.com/600x400/?supercar" ] },
+{ category:"Bikes", images:[ "https://source.unsplash.com/600x400/?bike" ] },
+{ category:"Royal Enfield", images:[ "https://source.unsplash.com/600x400/?royal-enfield" ] },
+{ category:"KTM", images:[ "https://source.unsplash.com/600x400/?ktm-bike" ] },
+{ category:"Yamaha", images:[ "https://source.unsplash.com/600x400/?yamaha-bike" ] },
+{ category:"Lamborghini", images:[ "https://source.unsplash.com/600x400/?lamborghini" ] },
+{ category:"Ferrari", images:[ "https://source.unsplash.com/600x400/?ferrari" ] },
+{ category:"Rolls Royce", images:[ "https://source.unsplash.com/600x400/?rolls-royce" ] },
+{ category:"Bikes Racing", images:[ "https://source.unsplash.com/600x400/?bike-racing" ] },
+{ category:"Formula 1", images:[ "https://source.unsplash.com/600x400/?formula-1" ] },
+{ category:"MotoGP", images:[ "https://source.unsplash.com/600x400/?motogp" ] },
+
+/* City Wallpapers */
+{ category:"City Wallpapers", images:[ "https://source.unsplash.com/600x400/?city" ] },
+{ category:"Skyline", images:[ "https://source.unsplash.com/600x400/?skyline" ] },
+{ category:"Buildings", images:[ "https://source.unsplash.com/600x400/?buildings" ] },
+{ category:"Roads", images:[ "https://source.unsplash.com/600x400/?road" ] },
+{ category:"Bridges", images:[ "https://source.unsplash.com/600x400/?bridge" ] },
+{ category:"Street Photography", images:[ "https://source.unsplash.com/600x400/?street-photography" ] }
+
+];
+
+/* ======================
+    2. STATE
+====================== */
+let currentCategoryImages = [];
+let currentIndex = 0;
+
+/* ======================
+    3. UI ELEMENTS
+====================== */
+
+const gallery = document.getElementById("gallery");
+const lightbox = document.getElementById("lightbox");
+const lightboxImage = document.getElementById("lightboxImage");
+
+/* ======================
+    4. CREATE BUTTONS
+====================== */
+const dropdown = document.getElementById("categoryDropdown");
+
+dropdown.innerHTML = ""; // ✅ clear old buttons
+
+galleryData.forEach((field,index)=>{
+    const btn = document.createElement("button");
+    btn.textContent = field.category;
+
+    btn.onclick = ()=>{
+        loadCategory(index);
+        dropdown.style.display = "none";
+    };
+
+    dropdown.appendChild(btn);
+});
+
+
+/* ======================
+    6. LIGHTBOX
+====================== */
+function openLightbox(i){
+    currentIndex = i;
+    lightbox.style.display = "flex";
+    lightboxImage.src = currentCategoryImages[currentIndex];
+    lightboxImage.style.filter = currentFilter; // 🔥 keep filter
+    lightboxImage.style.transform = "rotate(0deg)";
+lightboxImage.setAttribute("data-rotate", 0);
+lightboxImage.style.boxShadow = "none";
+
+}
+
+
+function closeLightbox(){
+    lightbox.style.display="none";
+}
+
+function navigate(step){
+    currentIndex += step;
+    if(currentIndex < 0) currentIndex = currentCategoryImages.length - 1;
+    if(currentIndex >= currentCategoryImages.length) currentIndex = 0;
+
+    lightboxImage.src = currentCategoryImages[currentIndex];
+    lightboxImage.style.filter = currentFilter; // 🔥 keep filter
+}
+
+/* ======================
+    7. IMAGE FILTERS
+====================== */
+let currentFilter = "none";
+
+
+
+function applyFilter(type) {
+    let filterValue = "none";
+
+    if (type === "grayscale") {
+        filterValue = "grayscale(100%)";
+    } 
+    else if (type === "polarized") {
+        filterValue = "contrast(140%) saturate(120%) brightness(95%)";
+    } 
+    else if (type === "blur") {
+        filterValue = "blur(3px)";
+    } 
+    else if (type === "sepia") {
+        filterValue = "sepia(100%)";
+    }
+
+    /* ✅ NEW FILTERS */
+    else if (type === "vintage") {
+        filterValue = "sepia(60%) contrast(120%) brightness(95%) saturate(120%)";
+    } 
+    else if (type === "hdr") {
+        filterValue = "contrast(160%) saturate(160%) brightness(105%)";
+    } 
+    else if (type === "cinematic") {
+        filterValue = "contrast(120%) saturate(85%) brightness(90%) sepia(20%)";
+    } 
+    else if (type === "lomo") {
+        filterValue = "contrast(150%) saturate(200%) brightness(90%)";
+    } 
+    else if (type === "clarendon") {
+        filterValue = "contrast(130%) saturate(140%) brightness(105%)";
+    } 
+    else if (type === "juno") {
+        filterValue = "contrast(115%) saturate(160%) sepia(20%) brightness(105%)";
+    } 
+    else if (type === "lark") {
+        filterValue = "brightness(110%) contrast(110%) saturate(120%)";
+    } 
+    else if (type === "gingham") {
+        filterValue = "brightness(105%) contrast(90%) sepia(25%)";
+    } 
+    else if (type === "valencia") {
+        filterValue = "sepia(35%) contrast(110%) brightness(108%) saturate(120%)";
+    }
+    /* ✅ MORE FILTERS */
+else if (type === "crema") {
+    filterValue = "contrast(105%) brightness(112%) saturate(120%) sepia(20%)";
+}
+else if (type === "rise") {
+    filterValue = "brightness(115%) contrast(110%) saturate(140%) sepia(10%)";
+}
+else if (type === "mayfair") {
+    filterValue = "contrast(110%) brightness(105%) saturate(150%) sepia(25%)";
+}
+else if (type === "sierra") {
+    filterValue = "contrast(95%) brightness(110%) saturate(120%) sepia(15%)";
+}
+else if (type === "hudson") {
+    filterValue = "contrast(110%) brightness(105%) saturate(80%) hue-rotate(190deg)";
+}
+else if (type === "inkwell") {
+    filterValue = "grayscale(100%) contrast(120%) brightness(95%)";
+}
+else if (type === "toaster") {
+    filterValue = "contrast(150%) brightness(110%) saturate(120%) sepia(30%)";
+}
+else if (type === "nashville") {
+    filterValue = "sepia(30%) contrast(90%) brightness(115%) saturate(110%)";
+}
+else if (type === "1977") {
+    filterValue = "contrast(110%) brightness(110%) saturate(130%) sepia(25%)";
+}
+else if (type === "kelvin") {
+    filterValue = "contrast(120%) brightness(110%) saturate(180%) sepia(35%)";
+}
+else if (type === "willow") {
+    filterValue = "grayscale(50%) contrast(110%) brightness(105%) sepia(20%)";
+}
+else if (type === "slumber") {
+    filterValue = "contrast(90%) brightness(105%) saturate(80%) sepia(20%)";
+}
+else if (type === "perpetua") {
+    filterValue = "brightness(110%) contrast(105%) saturate(140%) hue-rotate(-10deg)";
+}
+else if (type === "reyes") {
+    filterValue = "contrast(85%) brightness(120%) saturate(100%) sepia(15%)";
+}
+else if (type === "lofi") {
+    filterValue = "contrast(160%) saturate(140%) brightness(90%)";
+}
+else if (type === "aden") {
+    filterValue = "brightness(108%) contrast(90%) saturate(85%) sepia(20%)";
+}
+else if (type === "xpro2") {
+    filterValue = "contrast(130%) saturate(120%) sepia(10%) hue-rotate(-10deg)";
+}
+
+
+    else if (type === "original") {
+        filterValue = "none";
+    }
+
+    currentFilter = filterValue;
+
+    // Apply filter to gallery thumbnails
+    document.querySelectorAll(".gallery-item img").forEach(img => {
+        img.style.filter = filterValue;
+    });
+
+    // Apply filter to lightbox image
+    lightboxImage.style.filter = filterValue;
+
+    // Close filter menu
+    document.getElementById("filterOptions").style.display = "none";
+}
+
+
+function loadCategory(index){
+    gallery.innerHTML = "";
+    currentCategoryImages = galleryData[index].images;
+
+    // Show the back button
+    document.getElementById("backButton").style.display = "inline-block";
+
+    currentCategoryImages.forEach((url,i)=>{
+        const div = document.createElement("div");
+        div.className="gallery-item";
+        div.innerHTML = `<img src="${url}" onclick="openLightbox(${i})">`;
+
+
+        gallery.appendChild(div);
+    });
+}
+
+// Function to go back to category view
+function goBack(){
+    gallery.innerHTML = "";
+    document.getElementById("backButton").style.display = "none";
+
+    // ✅ Load default nature category
+    loadCategory(0);
+
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+
+
+document.addEventListener("keydown", function(e){
+    if(e.key === "Escape") closeLightbox();
+});
+function toggleFilters(){
+    const filters = document.getElementById("filterOptions");
+    filters.style.display = 
+        (filters.style.display === "flex") ? "none" : "flex";
+}
+function closeFilters(){
+    document.getElementById("filterOptions").style.display = "none";
+}
+document.addEventListener("click", function(e){
+    const filterBox = document.querySelector(".filter-container");
+    if(!filterBox.contains(e.target)){
+        document.getElementById("filterOptions").style.display = "none";
+    }
+});
+function downloadImage(){
+
+    // ✅ if tools canvas visible, download canvas itself
+    if(canvas.style.display === "block"){
+        const link = document.createElement("a");
+        link.download = "edited-image.png";
+        link.href = canvas.toDataURL("image/png");
+        link.click();
+        return;
+    }
+
+    // normal lightbox image download
+    const canvas2 = document.createElement("canvas");
+    const ctx2 = canvas2.getContext("2d");
+    const img = new Image();
+    img.crossOrigin = "anonymous";
+    img.src = lightboxImage.src;
+
+    img.onload = ()=>{
+        canvas2.width = img.width;
+        canvas2.height = img.height;
+        ctx2.filter = currentFilter;
+        ctx2.drawImage(img,0,0);
+
+        const link = document.createElement("a");
+        link.download = "image.jpg";
+        link.href = canvas2.toDataURL();
+        link.click();
+    };
+}
+
+function updateEditor(){
+    const sliders = document.querySelectorAll("#editorPanel input");
+
+    let brightness = sliders[0].value;
+    let contrast = sliders[1].value;
+    let saturate = sliders[2].value;
+    let warmth = sliders[3].value;
+    let shadow = sliders[4].value;
+    let highlight = sliders[5].value;
+    let sharp = sliders[6].value;
+
+    currentFilter = `
+        brightness(${brightness}%)
+        contrast(${contrast}%)
+        saturate(${saturate}%)
+        sepia(${warmth}%)
+        drop-shadow(0 0 ${shadow}px black)
+    `;
+
+    document.querySelectorAll(".gallery-item img").forEach(img=>{
+        img.style.filter = currentFilter;
+    });
+    lightboxImage.style.filter = currentFilter;
+}
+
+
+function toggleEditor(){
+    const editor = document.getElementById("editorPanel");
+    const filters = document.getElementById("filterOptions");
+
+    filters.style.display = "none"; // close filter if open
+    editor.style.display = (editor.style.display === "block") ? "none" : "block";
+}
+
+let swipeStartX = 0;
+
+lightbox.addEventListener("touchstart", e => {
+    swipeStartX = e.touches[0].clientX;
+});
+
+lightbox.addEventListener("touchend", e => {
+    let endX = e.changedTouches[0].clientX;
+
+    if (swipeStartX - endX > 50) navigate(1);
+    if (endX - swipeStartX > 50) navigate(-1);
+});
+
+// Load default category on page load
+loadCategory(0);
+
+function toggleCategoryMenu(){
+    const dropdown = document.getElementById("categoryDropdown");
+    dropdown.style.display = (dropdown.style.display === "block") ? "none" : "block";
+}
+
+
+document.addEventListener("click", function(e){
+    const dropdown = document.getElementById("categoryDropdown");
+    const btn = document.getElementById("categoryMainBtn");
+
+    if(!dropdown.contains(e.target) && e.target !== btn){
+        dropdown.style.display = "none";
+    }
+});
+
+/* ======================
+   ✅ CATEGORY SEARCH
+====================== */
+
+const searchBox = document.getElementById("searchBox");
+const searchInput = document.getElementById("searchInput");
+const searchResults = document.getElementById("searchResults");
+
+if(!searchBox || !searchInput || !searchResults){
+    console.warn("⚠ Category Search Box missing in HTML!");
+}
+
+function toggleSearch(){
+    if(!searchBox) return;
+
+    searchBox.style.display = (searchBox.style.display === "block") ? "none" : "block";
+
+    if(searchBox.style.display === "block"){
+        setTimeout(()=> searchInput.focus(), 200);
+    }
+}
+
+
+function closeSearch(){
+    searchBox.style.display = "none";
+    searchInput.value = "";
+    searchResults.innerHTML = "";
+}
+
+function showSearchResult(matchIndex){
+    // ✅ show searched category alone as top result
+    searchResults.innerHTML = "";
+
+    const btn = document.createElement("button");
+    btn.textContent = galleryData[matchIndex].category;
+
+    btn.onclick = ()=>{
+        loadCategory(matchIndex);
+        closeSearch();
+        dropdown.style.display = "none";
+    };
+
+    searchResults.appendChild(btn);
+}
+
+function showNotFound(){
+    searchResults.innerHTML = `<p style="padding:10px; font-size:13px; color:#444;">
+        ❌ No category found
+    </p>`;
+}
+
+searchInput.addEventListener("keydown", function(e){
+    if(e.key === "Enter"){
+        e.preventDefault();
+        const text = searchInput.value.trim().toLowerCase();
+
+        if(text === ""){
+            searchResults.innerHTML = "";
+            return;
+        }
+
+        // ✅ find category match
+        const matchIndex = galleryData.findIndex(item => 
+            item.category.toLowerCase() === text
+        );
+
+        if(matchIndex !== -1){
+            showSearchResult(matchIndex);
+        }else{
+            showNotFound();
+        }
+    }
+});
+
+// ✅ click outside closes search
+document.addEventListener("click", function(e){
+    const wrap = document.querySelector(".search-wrap");
+    if(wrap && !wrap.contains(e.target)){
+        closeSearch();
+        closeGlobalSearch();
+    }
+});
+
+/* ======================
+   ✅ TOOLS FUNCTIONS
+====================== */
+const toolsPanel = document.getElementById("toolsPanel");
+
+function toggleTools(){
+    // close other panels
+    document.getElementById("filterOptions").style.display = "none";
+    document.getElementById("editorPanel").style.display = "none";
+
+    if(toolsPanel.classList.contains("show")){
+        closeTools();
+    }else{
+        toolsPanel.style.display = "block";
+        setTimeout(()=> toolsPanel.classList.add("show"), 10);
+    }
+}
+
+function closeTools(){
+    toolsPanel.classList.remove("show");
+    setTimeout(()=> toolsPanel.style.display = "none", 350);
+}
+
+/* ✅ tool actions */
+/* ======================
+   ✅ CANVAS TOOL SYSTEM
+====================== */
+const canvas = document.getElementById("editCanvas");
+const ctx = canvas.getContext("2d");
+const toolActions = document.getElementById("toolActions");
+const brushControls = document.getElementById("brushControls");
+brushControls.style.display = "none"; 
+const brushColorInput = document.getElementById("brushColor");
+const brushSizeInput = document.getElementById("brushSize");
+
+let brushColor = brushColorInput.value;
+let brushSize = brushSizeInput.value;
+brushColorInput.addEventListener("input", () => {
+    brushColor = brushColorInput.value;
+});
+
+brushSizeInput.addEventListener("input", () => {
+    brushSize = brushSizeInput.value;
+});
+
+
+
+let activeTool = null;
+let drawing = false;
+let startX=0, startY=0;
+let cropBox = null;
+
+function setupCanvas(){
+    // canvas match image
+    canvas.width = lightboxImage.naturalWidth;
+    canvas.height = lightboxImage.naturalHeight;
+
+    canvas.style.display = "block";
+    canvas.style.opacity = "1";
+
+    // draw image into canvas
+    ctx.clearRect(0,0,canvas.width,canvas.height);
+    ctx.filter = currentFilter;
+    ctx.drawImage(lightboxImage, 0, 0);
+}
+
+function stopTools(){
+    activeTool = null;
+    drawing = false;
+    cropBox = null;
+
+    canvas.style.display = "none";
+    toolActions.style.display = "none";
+    brushControls.style.display = "none";
+
+
+    lightboxImage.style.display = "block";
+}
+
+/* ✅ Tool Action */
+function toolAction(type){
+
+    // ✅ effects work normally (no need canvas)
+    // show brush controls only in brush mode
+if(type === "brush"){
+    brushControls.style.display = "flex";
+}else{
+    brushControls.style.display = "none";
+}
+
+    if(type === "grain"){
+        currentFilter = "contrast(105%) brightness(100%) saturate(110%)";
+        lightboxImage.style.filter = currentFilter;
+        closeTools();
+        return;
+    }
+
+    if(type === "noir"){
+        currentFilter = "grayscale(100%) contrast(140%) brightness(90%)";
+        lightboxImage.style.filter = currentFilter;
+        closeTools();
+        return;
+    }
+
+    if(type === "vignette"){
+        currentFilter = "brightness(95%) contrast(120%)";
+        lightboxImage.style.filter = currentFilter;
+        lightboxImage.style.boxShadow = "inset 0 0 80px rgba(0,0,0,0.6)";
+        closeTools();
+        return;
+    }
+
+    if(type === "glamour"){
+        currentFilter = "brightness(110%) contrast(105%) saturate(140%) blur(0.5px)";
+        lightboxImage.style.filter = currentFilter;
+        closeTools();
+        return;
+    }
+
+    if(type === "drama"){
+        currentFilter = "contrast(170%) brightness(95%) saturate(120%)";
+        lightboxImage.style.filter = currentFilter;
+        closeTools();
+        return;
+    }
+
+    if(type === "rotate"){
+        let currentRotation = lightboxImage.getAttribute("data-rotate") || 0;
+        currentRotation = (parseInt(currentRotation) + 90) % 360;
+
+        lightboxImage.setAttribute("data-rotate", currentRotation);
+        lightboxImage.style.transition = "0.4s ease";
+        lightboxImage.style.transform = `rotate(${currentRotation}deg)`;
+        closeTools();
+        return;
+    }
+
+    // ✅ Crop / Brush / Healing require canvas
+    activeTool = type;
+    setupCanvas();
+
+    // hide image when tool active
+    lightboxImage.style.display = "none";
+
+    // show tool action bar only for crop
+    if(type === "crop"){
+        toolActions.style.display = "flex";
+    }else{
+        toolActions.style.display = "none";
+    }
+
+    closeTools();
+}
+
+/* ✅ Crop apply */
+function applyCrop(){
+    if(!cropBox){
+        alert("Select crop area first ✂");
+        return;
+    }
+
+    const {x,y,w,h} = cropBox;
+
+    const temp = document.createElement("canvas");
+    temp.width = w;
+    temp.height = h;
+
+    const tctx = temp.getContext("2d");
+    tctx.drawImage(canvas, x,y,w,h, 0,0,w,h);
+
+    // replace canvas with cropped
+    canvas.width = w;
+    canvas.height = h;
+    ctx.clearRect(0,0,w,h);
+    ctx.drawImage(temp,0,0);
+
+    cropBox = null;
+    alert("✅ Cropped");
+}
+
+/* ✅ Mouse / Touch events */
+function getPos(e){
+    const rect = canvas.getBoundingClientRect();
+    const scaleX = canvas.width / rect.width;
+    const scaleY = canvas.height / rect.height;
+
+    let x,y;
+
+    if(e.touches){
+        x = (e.touches[0].clientX - rect.left) * scaleX;
+        y = (e.touches[0].clientY - rect.top) * scaleY;
+    }else{
+        x = (e.clientX - rect.left) * scaleX;
+        y = (e.clientY - rect.top) * scaleY;
+    }
+    return {x,y};
+}
+
+canvas.addEventListener("mousedown", startDraw);
+canvas.addEventListener("touchstart", startDraw);
+
+function startDraw(e){
+    if(!activeTool) return;
+    drawing = true;
+    const pos = getPos(e);
+    startX = pos.x;
+    startY = pos.y;
+}
+
+canvas.addEventListener("mousemove", drawMove);
+canvas.addEventListener("touchmove", drawMove);
+
+function drawMove(e){
+    if(!drawing || !activeTool) return;
+    e.preventDefault();
+    const pos = getPos(e);
+
+    // redraw original
+    if(activeTool === "crop"){
+        setupCanvas();
+
+        cropBox = {
+            x: Math.min(startX,pos.x),
+            y: Math.min(startY,pos.y),
+            w: Math.abs(pos.x-startX),
+            h: Math.abs(pos.y-startY)
+        };
+
+        // show crop rectangle
+        ctx.strokeStyle = "red";
+        ctx.lineWidth = 4;
+        ctx.strokeRect(cropBox.x,cropBox.y,cropBox.w,cropBox.h);
+    }
+
+    // ✅ Brush tool
+    if(activeTool === "brush"){
+        ctx.strokeStyle = brushColor;
+        ctx.lineWidth = brushSize;
+        ctx.lineCap = "round";
+
+        ctx.beginPath();
+        ctx.moveTo(startX,startY);
+        ctx.lineTo(pos.x,pos.y);
+        ctx.stroke();
+
+        startX = pos.x;
+        startY = pos.y;
+    }
+
+    // ✅ Healing tool
+    if(activeTool === "healing"){
+        ctx.filter = "blur(6px)";
+        ctx.drawImage(canvas, pos.x-15, pos.y-15, 30, 30, pos.x-15, pos.y-15, 30, 30);
+        ctx.filter = currentFilter;
+    }
+}
+
+canvas.addEventListener("mouseup", stopDraw);
+canvas.addEventListener("touchend", stopDraw);
+
+function stopDraw(){
+    drawing = false;
+}
+
+/* ✅ When closing lightbox, stop tools */
+const oldCloseLightbox = closeLightbox;
+closeLightbox = function(){
+    oldCloseLightbox();
+    stopTools();
+};
+/* ==========================
+   ✅ GLOBAL WALLPAPER SEARCH
+========================== */
+
+const globalSearchBox = document.getElementById("globalSearchBox");
+const globalSearchInput = document.getElementById("globalSearchInput");
+
+function toggleGlobalSearch(){
+    // close category search box if open
+    document.getElementById("searchBox").style.display = "none";
+
+    globalSearchBox.style.display = (globalSearchBox.style.display === "block") ? "none" : "block";
+
+    if(globalSearchBox.style.display === "block"){
+        setTimeout(()=> globalSearchInput.focus(), 200);
+    }
+}
+
+function closeGlobalSearch(){
+    globalSearchBox.style.display = "none";
+    globalSearchInput.value = "";
+}
+
+/* ✅ Run global search */
+async function runGlobalSearch(){
+    let query = globalSearchInput.value.trim();
+    if(query === "") return;
+
+    const results = [];
+    const totalNeeded = 100;
+    const perPage = 30;
+    const pages = Math.ceil(totalNeeded / perPage);
+
+    try {
+        for(let page = 1; page <= pages; page++){
+
+            const url = `https://api.unsplash.com/search/photos?query=${encodeURIComponent(query)}&per_page=${perPage}&page=${page}`;
+
+            const res = await fetch(url, {
+                headers: {
+                    Authorization: `Client-ID ${UNSPLASH_KEY}`
+                }
+            });
+
+            // ✅ if response failed
+            if(!res.ok){
+                const text = await res.text();
+                console.error("Unsplash Error:", res.status, text);
+
+                if(res.status === 401){
+                    alert("❌ Unsplash Key Invalid (401)");
+                }
+                else if(res.status === 403){
+                    alert("❌ Unsplash blocked request (403) - Rate limit / key restriction");
+                }
+                else if(res.status === 429){
+                    alert("⚠ Too many requests (429). Wait 1 minute and try again.");
+                }
+                else{
+                    alert(`❌ Error fetching wallpapers (${res.status})`);
+                }
+
+                return;
+            }
+
+            const data = await res.json();
+
+            if(!data.results || data.results.length === 0){
+                break;
+            }
+
+            data.results.forEach(photo => {
+                if(photo?.urls?.regular){
+                    results.push(photo.urls.regular);
+                }
+            });
+
+            // ✅ stop at 100
+            if(results.length >= totalNeeded) break;
+
+            // ✅ small delay to avoid rate-limit
+            await new Promise(r => setTimeout(r, 350));
+        }
+
+        if(results.length === 0){
+            alert("❌ No wallpapers found!");
+            return;
+        }
+
+        const finalResults = results.slice(0, totalNeeded);
+
+        // ✅ Load into gallery
+        gallery.innerHTML = "";
+        currentCategoryImages = finalResults;
+
+        document.getElementById("backButton").style.display = "inline-block";
+
+        finalResults.forEach((url,i)=>{
+            const div = document.createElement("div");
+            div.className = "gallery-item";
+            div.innerHTML = `<img src="${url}" onclick="openLightbox(${i})">`;
+            gallery.appendChild(div);
+        });
+
+        closeGlobalSearch();
+
+    } catch(err) {
+        console.error("Fetch failed:", err);
+        alert("❌ Network error / API blocked. Try after 1 minute.");
+    }
+}
+
+function openCustomUpload(){
+    document.getElementById("customUpload").click();
+}
+
+function loadCustomImage(event){
+    const file = event.target.files[0];
+    if(!file) return;
+
+    // ✅ 20MB limit
+    const maxSize = 20 * 1024 * 1024;
+    if(file.size > maxSize){
+        alert("❌ File too large! Maximum allowed size is 20MB.");
+        event.target.value = "";
+        return;
+    }
+
+    // ✅ allow only image
+    if(!file.type.startsWith("image/")){
+        alert("❌ Please upload only image files (JPG/PNG).");
+        event.target.value = "";
+        return;
+    }
+
+    // ✅ Convert file into usable URL
+    const imgURL = URL.createObjectURL(file);
+
+    // ✅ show in gallery as single image
+    gallery.innerHTML = "";
+    currentCategoryImages = [imgURL];
+
+    document.getElementById("backButton").style.display = "inline-block";
+
+    const div = document.createElement("div");
+    div.className = "gallery-item";
+    div.innerHTML = `<img src="${imgURL}" onclick="openLightbox(0)">`;
+    gallery.appendChild(div);
+
+    // ✅ auto open lightbox
+    openLightbox(0);
+
+    // reset input so user can upload same image again
+    event.target.value = "";
+}
+
+
+function logout(){
+  localStorage.removeItem("token");
+  window.location.href = "home.html";
+}
+
+let selectedImageForAI = null;
+
+function openAIGenerator(){
+    document.getElementById("aiModal").style.display = "flex";
+    document.getElementById("aiStatus").innerText = "";
+
+    // reset old result
+    document.getElementById("aiResultVideo").style.display = "none";
+    document.getElementById("aiDownloadLink").style.display = "none";
+
+    // if user opened lightbox, take that wallpaper for AI
+    if(lightbox.style.display === "flex" && lightboxImage.src){
+        selectedImageForAI = lightboxImage.src;
+        document.getElementById("aiPreviewImg").src = selectedImageForAI;
+        document.getElementById("aiPreviewImg").style.display = "block";
+    }
+}
+
+function closeAIGenerator(){
+    document.getElementById("aiModal").style.display = "none";
+}
+
+document.getElementById("aiUpload").addEventListener("change", (e)=>{
+    const file = e.target.files[0];
+    if(!file) return;
+
+    selectedImageForAI = file;
+    const url = URL.createObjectURL(file);
+
+    document.getElementById("aiPreviewImg").src = url;
+    document.getElementById("aiPreviewImg").style.display = "block";
+});
+
+async function generateAIVideo(){
+    if(!selectedImageForAI){
+        alert("❌ Please select an image first!");
+        return;
+    }
+
+    const status = document.getElementById("aiStatus");
+    status.innerText = "⏳ Generating HD 8s video... Please wait...";
+
+    try{
+        const formData = new FormData();
+
+        // case 1: selected wallpaper (url)
+        if(typeof selectedImageForAI === "string"){
+            formData.append("imageUrl", selectedImageForAI);
+        } 
+        // case 2: uploaded file
+        else{
+            formData.append("image", selectedImageForAI);
+        }
+
+        const res = await fetch("http://localhost:5000/ai-generate", {
+            method:"POST",
+            body: formData
+        });
+
+        if(!res.ok){
+            const err = await res.json();
+            status.innerText = "❌ " + (err.message || "AI Generation failed");
+            return;
+        }
+
+        const data = await res.json();
+        status.innerText = "✅ Video ready!";
+
+        const video = document.getElementById("aiResultVideo");
+        video.src = data.videoUrl;
+        video.style.display = "block";
+        video.play();
+
+        const link = document.getElementById("aiDownloadLink");
+        link.href = data.videoUrl;
+        link.style.display = "block";
+        link.innerText = "⬇ Download 8s HD Video";
+
+    }catch(err){
+        console.error(err);
+        status.innerText = "❌ Backend not running / error generating video";
+    }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+</script>
+
+</body>
+</html>

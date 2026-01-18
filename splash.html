@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Wallpaper Wallet</title>
+
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700;800&display=swap" rel="stylesheet">
+
+  <style>
+    *{
+      margin:0;
+      padding:0;
+      box-sizing:border-box;
+      font-family: "Poppins", sans-serif;
+    }
+
+    body{
+      height:100vh;
+      width:100vw;
+      display:flex;
+      justify-content:center;
+      align-items:center;
+      background: linear-gradient(135deg, #eaf7ff, #d7f0ff);
+      overflow:hidden;
+      transition: opacity 0.8s ease; /* ✅ fade effect */
+    }
+
+    /* ✅ fade out class */
+    body.fade-out{
+      opacity:0;
+    }
+
+    /* soft blobs background */
+    .blob{
+      position:absolute;
+      width:350px;
+      height:350px;
+      background: rgba(33,150,243,0.12);
+      border-radius:50%;
+      filter: blur(50px);
+      animation: float 6s infinite ease-in-out;
+    }
+    .blob.one{ top:-120px; left:-120px; }
+    .blob.two{ bottom:-140px; right:-140px; animation-delay:2s; }
+
+    @keyframes float{
+      0%,100%{ transform: translateY(0px); }
+      50%{ transform: translateY(30px); }
+    }
+
+    /* main card */
+    .splash-card{
+      position:relative;
+      z-index:5;
+      background: rgba(255,255,255,0.92);
+      backdrop-filter: blur(12px);
+      padding: 45px 55px;
+      border-radius: 26px;
+      box-shadow: 0 18px 45px rgba(0,0,0,0.18);
+      text-align:center;
+      animation: pop 0.9s ease;
+      width: 92%;
+      max-width: 460px;
+    }
+
+    @keyframes pop{
+      0%{ opacity:0; transform: scale(0.85); }
+      100%{ opacity:1; transform: scale(1); }
+    }
+
+    /* logo circle */
+    .logo{
+      width:80px;
+      height:80px;
+      border-radius:50%;
+      margin: 0 auto 20px;
+      display:flex;
+      justify-content:center;
+      align-items:center;
+      font-size:32px;
+      font-weight:800;
+      color:white;
+      background: linear-gradient(45deg, #000, #2196f3);
+      box-shadow: 0 8px 20px rgba(33,150,243,0.35);
+      animation: bounce 1.6s infinite ease-in-out;
+    }
+
+    @keyframes bounce{
+      0%,100%{ transform: translateY(0); }
+      50%{ transform: translateY(-10px); }
+    }
+
+    /* text */
+    h1{
+      font-size: 34px;
+      font-weight: 800;
+      margin-bottom: 10px;
+      letter-spacing: 1px;
+      background: linear-gradient(90deg, #000, #3f51b5);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    p{
+      font-size: 14px;
+      font-weight: 600;
+      color:#111;
+      opacity:0.85;
+      margin-bottom: 28px;
+    }
+
+    /* spinner */
+    .spinner{
+      width:46px;
+      height:46px;
+      border-radius:50%;
+      margin: 0 auto;
+      border: 6px solid rgba(0,0,0,0.12);
+      border-top: 6px solid #2196f3;
+      animation: spin 0.9s linear infinite;
+    }
+
+    @keyframes spin{
+      0%{ transform: rotate(0deg); }
+      100%{ transform: rotate(360deg); }
+    }
+
+    /* footer */
+    .footer{
+      margin-top: 22px;
+      font-size: 12px;
+      font-weight: 600;
+      color:#000;
+      opacity:0.55;
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- background blobs -->
+  <div class="blob one"></div>
+  <div class="blob two"></div>
+
+  <!-- splash card -->
+  <div class="splash-card">
+    <div class="logo">W</div>
+
+    <h1>Wallpaper Wallet</h1>
+    <p>Premium Wallpapers • Filters • Tools • Downloads</p>
+
+    <div class="spinner"></div>
+
+    <div class="footer">Loading your experience...</div>
+  </div>
+
+  <script>
+    // ✅ Wait 2 sec
+    setTimeout(() => {
+
+      // ✅ fade out body
+      document.body.classList.add("fade-out");
+
+      // ✅ redirect after fade completes (0.8 sec)
+      setTimeout(() => {
+        window.location.href = "home.html";
+      }, 800);
+
+    }, 5000);
+  </script>
+
+</body>
+</html>
